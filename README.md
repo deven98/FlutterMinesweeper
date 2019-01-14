@@ -1,6 +1,8 @@
 # flutter_minesweeper
 
-A new Flutter application.
+A Minesweeper clone made in Flutter.
+
+![alt text]("")
 
 ## Getting Started
 
