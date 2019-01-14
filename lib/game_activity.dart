@@ -125,7 +125,6 @@ class _GameActivityState extends State<GameActivity> {
                     });
                   }
 
-                  print(squaresLeft);
                   if(squaresLeft <= bombCount) {
                     _handleWin();
                   }
