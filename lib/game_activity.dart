@@ -116,12 +116,20 @@ class _GameActivityState extends State<GameActivity> {
                   if (board[rowNumber][columnNumber].hasBomb) {
                     _handleGameOver();
                   }
-                  setState(() {
-                    openedSquares[position] = true;
-                  });
                   if (board[rowNumber][columnNumber].bombsAround == 0) {
                     _handleTap(rowNumber, columnNumber);
+                  } else {
+                    setState(() {
+                      openedSquares[position] = true;
+                      squaresLeft = squaresLeft - 1;
+                    });
                   }
+
+                  print(squaresLeft);
+                  if(squaresLeft <= bombCount) {
+                    _handleWin();
+                  }
+
                 },
                 // Flags square
                 onLongPress: () {
@@ -242,7 +250,6 @@ class _GameActivityState extends State<GameActivity> {
     int position = (i * columnCount) + j;
     openedSquares[position] = true;
     squaresLeft = squaresLeft - 1;
-    print(squaresLeft);
 
     if (i > 0) {
       if (!board[i - 1][j].hasBomb &&
@@ -291,6 +298,27 @@ class _GameActivityState extends State<GameActivity> {
         return AlertDialog(
           title: Text("Game Over!"),
           content: Text("You stepped on a mine!"),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                _initialiseGame();
+                Navigator.pop(context);
+              },
+              child: Text("Play again"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleWin() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Congratulations!"),
+          content: Text("You Win!"),
           actions: <Widget>[
             FlatButton(
               onPressed: () {
