@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_minesweeper/board_square.dart';
 
+// Types of images available
 enum ImageType {
   zero,
   one,
@@ -24,17 +25,25 @@ class GameActivity extends StatefulWidget {
 }
 
 class _GameActivityState extends State<GameActivity> {
-  int rowCount = 19;
+  // Row and column count of the board
+  int rowCount = 18;
   int columnCount = 10;
 
+  // The grid of squares
   List<List<BoardSquare>> board;
 
+  // "Opened" refers to being clicked already
   List<bool> openedSquares;
+
+  // A flagged square is a square a user has added a flag on by long pressing
   List<bool> flaggedSquares;
 
-  // Probability that a square will be a bomb (1-9)
+  // Probability that a square will be a bomb
   int bombProbability = 3;
   int maxProbability = 15;
+
+  int bombCount = 0;
+  int squaresLeft;
 
   @override
   void initState() {
@@ -59,18 +68,24 @@ class _GameActivityState extends State<GameActivity> {
                     _initialiseGame();
                   },
                   child: CircleAvatar(
-                    child: Icon(Icons.tag_faces, color: Colors.black, size: 40.0,),
+                    child: Icon(
+                      Icons.tag_faces,
+                      color: Colors.black,
+                      size: 40.0,
+                    ),
                     backgroundColor: Colors.yellowAccent,
                   ),
                 )
               ],
             ),
           ),
+          // The grid of squares
           GridView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columnCount),
+              crossAxisCount: columnCount,
+            ),
             itemBuilder: (context, position) {
               // Get row and column number of square
               int rowNumber = (position / columnCount).floor();
@@ -79,7 +94,11 @@ class _GameActivityState extends State<GameActivity> {
               Image image;
 
               if (openedSquares[position] == false) {
-                image = getImage(ImageType.facingDown);
+                if (flaggedSquares[position] == true) {
+                  image = getImage(ImageType.flagged);
+                } else {
+                  image = getImage(ImageType.facingDown);
+                }
               } else {
                 if (board[rowNumber][columnNumber].hasBomb) {
                   image = getImage(ImageType.bomb);
@@ -92,6 +111,7 @@ class _GameActivityState extends State<GameActivity> {
               }
 
               return InkWell(
+                // Opens square
                 onTap: () {
                   if (board[rowNumber][columnNumber].hasBomb) {
                     _handleGameOver();
@@ -101,6 +121,14 @@ class _GameActivityState extends State<GameActivity> {
                   });
                   if (board[rowNumber][columnNumber].bombsAround == 0) {
                     _handleTap(rowNumber, columnNumber);
+                  }
+                },
+                // Flags square
+                onLongPress: () {
+                  if (openedSquares[position] == false) {
+                    setState(() {
+                      flaggedSquares[position] = true;
+                    });
                   }
                 },
                 splashColor: Colors.grey,
@@ -117,6 +145,7 @@ class _GameActivityState extends State<GameActivity> {
     );
   }
 
+  // Initialises all lists
   void _initialiseGame() {
     // Initialise all squares to having no bombs
     board = List.generate(rowCount, (i) {
@@ -130,6 +159,14 @@ class _GameActivityState extends State<GameActivity> {
       return false;
     });
 
+    flaggedSquares = List.generate(rowCount * columnCount, (i) {
+      return false;
+    });
+
+    // Resets bomb count
+    bombCount = 0;
+    squaresLeft = rowCount * columnCount;
+
     // Randomly generate bombs
     Random random = new Random();
     for (int i = 0; i < rowCount; i++) {
@@ -137,6 +174,7 @@ class _GameActivityState extends State<GameActivity> {
         int randomNumber = random.nextInt(maxProbability);
         if (randomNumber < bombProbability) {
           board[i][j].hasBomb = true;
+          bombCount++;
         }
       }
     }
@@ -197,11 +235,14 @@ class _GameActivityState extends State<GameActivity> {
     setState(() {});
   }
 
+  // This function opens other squares around the target square which don't have any bombs around them.
+  // We use a recursive function which stops at squares which have a non zero number of bombs around them.
   void _handleTap(int i, int j) {
-    print("Pos" + i.toString() + " " + j.toString());
 
     int position = (i * columnCount) + j;
     openedSquares[position] = true;
+    squaresLeft = squaresLeft - 1;
+    print(squaresLeft);
 
     if (i > 0) {
       if (!board[i - 1][j].hasBomb &&
@@ -242,6 +283,7 @@ class _GameActivityState extends State<GameActivity> {
     setState(() {});
   }
 
+  // Function to handle when a bomb is clicked.
   void _handleGameOver() {
     showDialog(
       context: context,
