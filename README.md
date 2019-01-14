@@ -2,7 +2,7 @@
 
 A Minesweeper clone made in Flutter.
 
-![]("https://github.com/deven98/FlutterMinesweeper/blob/master/screenshot.png")
+![alt text]("https://github.com/deven98/FlutterMinesweeper/blob/master/screenshot.png")
 
 ## Getting Started
 
