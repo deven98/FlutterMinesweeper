@@ -2,7 +2,8 @@
 
 A Minesweeper clone made in Flutter.
 
-![alt text](https://github.com/deven98/FlutterMinesweeper/blob/master/screenshot.png)
+<img src="https://flutter-glimpse.tomasdostal.com/?r=tomino2112%2FFlutterMinesweeper&t=test_driver%2Fglimpse" width="320" />
+<img src="https://flutter-glimpse.tomasdostal.com/?r=tomino2112%2FFlutterMinesweeper" width="320" />
 
 ## Getting Started
 
