@@ -1,7 +1,7 @@
+import 'dart:math';
+import 'dart:async';
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
-import 'dart:math';
-
 
 void main() {
   group('Video Glimpse', () {
@@ -25,28 +25,29 @@ void main() {
     }
 
     longPress(target) async {
-      await driver.scroll(target, 0, 0, Duration(milliseconds: 400));
+      await driver.scroll(target, 0, 0, Duration(milliseconds: 500));
     }
 
     tapOnSquareAndWait({
       SerializableFinder target,
-      Duration wait = const Duration(milliseconds: 300)
+      Duration wait = const Duration(milliseconds: 200)
     }) async {
       await driver.tap(target);
-      await Future.delayed(wait, () {});
+      await Future.delayed(wait);
     }
 
     longPressOnSquareAndWait({
       SerializableFinder target,
-      Duration wait = const Duration(milliseconds: 500)
+      Duration wait = const Duration(milliseconds: 200)
     }) async {
       await longPress(target);
-      await Future.delayed(wait, () {});
+      await Future.delayed(wait);
     }
 
     // Connect to the Flutter driver before running any tests
     setUpAll(() async {
       driver = await FlutterDriver.connect();
+      await Future.delayed(Duration(milliseconds: 400));
     });
 
     // Close the connection to the driver after the tests have completed
@@ -54,28 +55,16 @@ void main() {
       await driver?.close();
     });
 
-    test('Tap on couple of correct fields', () async {
-      await Future.delayed(Duration(milliseconds: 400), () {});
-
-      for(int i = 0; i < 2; i++) {
-        await tapOnSquareAndWait(target: await findRandomSquare());
-      }
-    });
-
-    test('Long taps to create couple of flags', () async {
-      for(int i = 0; i < 2; i++) {
-        await longPressOnSquareAndWait(target: await findRandomSquare());
-      }
-    });
-
-    test('Tap on couple of correct fields', () async {
-      for(int i = 0; i < 3; i++) {
-        await tapOnSquareAndWait(target: await findRandomSquare());
-      }
-    });
-
-    test('Tap on a bomb', () async {
-      await tapOnSquareAndWait(target: await findRandomSquare('Bomb'), wait: Duration(seconds: 2));
+    test('Do couple of actions to showcase the app', () async {
+      await tapOnSquareAndWait(target: await findRandomSquare());
+      await longPressOnSquareAndWait(target: await findRandomSquare());
+      await tapOnSquareAndWait(target: await findRandomSquare());
+      await longPressOnSquareAndWait(target: await findRandomSquare());
+      await tapOnSquareAndWait(target: await findRandomSquare());
+      await tapOnSquareAndWait(
+          target: await findRandomSquare('Bomb'),
+          wait: Duration(seconds: 2)
+      );
     });
   });
 }
