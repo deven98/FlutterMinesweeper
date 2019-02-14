@@ -110,7 +110,20 @@ class _GameActivityState extends State<GameActivity> {
                 }
               }
 
+              String tapTargetKey = '';
+
+              if (openedSquares[position] == true
+                  || flaggedSquares[position] == true
+                  || (board[rowNumber][columnNumber].bombsAround > 0 && !board[rowNumber][columnNumber].hasBomb)
+              ) {
+                tapTargetKey = '__BoardSquare_Dirty__';
+              } else {
+                final String squareType = (board[rowNumber][columnNumber].hasBomb) ? 'Bomb' : 'Safe';
+                tapTargetKey = '__BoardSquare_${rowNumber}x${columnNumber}_${squareType}__';
+              }
+
               return InkWell(
+                key: Key(tapTargetKey),
                 // Opens square
                 onTap: () {
                   if (board[rowNumber][columnNumber].hasBomb) {
