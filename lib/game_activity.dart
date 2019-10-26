@@ -130,13 +130,11 @@ class _GameActivityState extends State<GameActivity> {
                   }
 
                 },
-                // Flags square
+                // Toggle Flags square
                 onLongPress: () {
-                  if (openedSquares[position] == false) {
-                    setState(() {
-                      flaggedSquares[position] = true;
-                    });
-                  }
+                  setState(() {
+                    flaggedSquares[position] = !flaggedSquares[position];
+                  });
                 },
                 splashColor: Colors.grey,
                 child: Container(
